@@ -14,6 +14,9 @@ var (
 	//go:embed all:templates/*
 	templateFS embed.FS
 
+	//go:embed htmx.min.js
+	htmx embed.FS
+
 	// Parsed templates
 	html *template.Template
 )
@@ -28,6 +31,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /", http.HandlerFunc(index))
+	mux.Handle("GET /htmx.min.js", http.FileServer(http.FS(htmx)))
 	mux.Handle("GET /details/{id}", http.HandlerFunc(updateDetails))
 	log.Fatal(http.ListenAndServe(":8080", handlers.RecoveryHandler()(mux)))
 }
