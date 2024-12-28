@@ -17,6 +17,9 @@ var (
 	//go:embed htmx.min.js
 	htmx embed.FS
 
+	//go:embed bulma.min.css
+	bulma embed.FS
+
 	// Parsed templates
 	html *template.Template
 )
@@ -32,12 +35,16 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("GET /", http.HandlerFunc(index))
 	mux.Handle("GET /htmx.min.js", http.FileServer(http.FS(htmx)))
+	mux.Handle("GET /bulma.min.css", http.FileServer(http.FS(bulma)))
 	mux.Handle("GET /details/{id}", http.HandlerFunc(updateDetails))
 	log.Fatal(http.ListenAndServe(":8080", handlers.RecoveryHandler()(mux)))
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	table := []int{1, 2, 3, 4}
+	table := []int{}
+	for i := range 9999 {
+		table = append(table, i)
+	}
 	arg := map[string]any{"table": table, "details": table[0]}
 	if err := html.ExecuteTemplate(w, "index.html", arg); err != nil {
 		panic(err)

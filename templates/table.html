@@ -1,12 +1,14 @@
-<table>
-  <thead>
-    <tr>
-      <th scope="col" class="px-6 py-4">#</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{range .}}
+<div style="overflow: auto; max-height: 98vh">
+  <table class="table is-bordered is-striped is-fullwidth">
+    <thead>
+      <tr>
+        <th>#</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .}}
       {{ template "row.html" . }}
-    {{end}}
-  </tbody>
-</table>
+      {{end}}
+    </tbody>
+  </table>
+</div>

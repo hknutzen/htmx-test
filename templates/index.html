@@ -2,14 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="/htmx.min.js"></script>
     <title>HTMX Test</title>
+    <link rel="stylesheet" href="/bulma.min.css">
   </head>
   <body>
-    <h1>HTMX Test</h1>
-    {{ template "table.html" .table }}
-    <p>
-    {{ template "details.html" .details }}
+      <div class="columns">
+        <div class="column is-one-quarter">
+          {{ template "table.html" .table }}
+        </div>
+        <div class="column">
+          {{ template "details.html" .details }}
+        </div>
   </body>
 </html>
