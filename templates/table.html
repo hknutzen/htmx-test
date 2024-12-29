@@ -1,12 +1,16 @@
-<table>
-  <thead>
-    <tr>
-      <th scope="col" class="px-6 py-4">#</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{range .}}
-      {{ template "row.html" . }}
-    {{end}}
-  </tbody>
-</table>
+<div class="col d-flex flex-column vh-100" style="max-height: 100vh">
+  <div class="row">
+    Services
+  </div>
+  <div class="row flex-grow-1 overflow-auto border">
+    <div class="col">
+      <table class="table table-striped">
+        <tbody>
+          {{range .}}
+          {{ template "row.html" . }}
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

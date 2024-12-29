@@ -2,14 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="/htmx.min.js"></script>
     <title>HTMX Test</title>
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <style type="text/css">
+      body {
+          min-height: 100vh;
+      }
+      main {
+          height: 100vh;
+          max-height: 100vh;
+      }
+      .scrollarea {
+          overflow-y: auto;
+      }
+    </style>
   </head>
   <body>
-    <h1>HTMX Test</h1>
-    {{ template "table.html" .table }}
-    <p>
-    {{ template "details.html" .details }}
+    <main>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            {{ template "table.html" .table }}
+          </div>
+          <div class="col">
+            {{ template "details.html" .details }}
+          </div>
+        </div>
+      </div>
+    </main>
   </body>
 </html>
