@@ -1,13 +1,19 @@
 <div class="col d-flex flex-column vh-100" style="max-height: 100vh">
   <div class="row">
-    Services
+    <p class="text-end">
+       {{len .}} Dienste verfügbar
+    </p>
   </div>
   <div class="row flex-grow-1 overflow-auto border">
     <div class="col">
       <table class="table table-striped">
-        <tbody>
+        <tbody hx-target="#details">
           {{range .}}
-          {{ template "row.html" . }}
+          <tr>
+            <td hx-get="/details/{{.}}">
+              {{.}}
+            </td>
+          </tr>
           {{end}}
         </tbody>
       </table>
