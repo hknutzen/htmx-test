@@ -37,24 +37,55 @@ func main() {
 	mux.Handle("GET /", http.HandlerFunc(index))
 	mux.Handle("GET /htmx.min.js", http.FileServer(http.FS(htmx)))
 	mux.Handle("GET /bootstrap.min.css", http.FileServer(http.FS(css)))
-	mux.Handle("GET /details/{id}", http.HandlerFunc(updateDetails))
+	mux.Handle("GET /details/{service}", http.HandlerFunc(updateDetails))
+	mux.Handle("GET /showUsers/{state}", http.HandlerFunc(showUsers))
 	log.Fatal(http.ListenAndServe(":8080", handlers.RecoveryHandler()(mux)))
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
 	table := []string{}
-	for i := range 19 {
+	for i := range 20 {
 		table = append(table, fmt.Sprintf("Service-%d", i+1))
 	}
-	arg := map[string]any{"table": table, "details": table[0]}
+	arg := map[string]any{
+		"table": table,
+		"details": &serviceDetails{
+			Service:   table[0],
+			ShowUsers: "off",
+		},
+	}
 	if err := html.ExecuteTemplate(w, "index.html", arg); err != nil {
 		panic(err)
 	}
 }
 
+type serviceDetails struct {
+	Service   string
+	ShowUsers string
+}
+
 func updateDetails(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
-	if err := html.ExecuteTemplate(w, "details.html", id); err != nil {
+	details := &serviceDetails{
+		Service:   r.PathValue("service"),
+		ShowUsers: r.URL.Query().Get("showUsers"),
+	}
+	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
 		panic(err)
 	}
+	fmt.Fprintf(w,
+		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
+		"service", "service", details.Service)
+}
+
+func showUsers(w http.ResponseWriter, r *http.Request) {
+	details := &serviceDetails{
+		Service:   r.URL.Query().Get("service"),
+		ShowUsers: r.PathValue("state"),
+	}
+	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
+		panic(err)
+	}
+	fmt.Fprintf(w,
+		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
+		"showUsers", "showUsers", details.ShowUsers)
 }

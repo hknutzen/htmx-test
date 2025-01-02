@@ -24,10 +24,33 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col">
+            <!-- rembember selected service -->
+            <input type="hidden" id="service" name="service"
+                   value="{{.details.Service}}" />
             {{ template "table.html" .table }}
           </div>
           <div class="col-8">
-            {{ template "details.html" .details }}
+            <!-- rembember if details or users are shown -->
+            <input type="hidden" id="showUsers" name="showUsers" value="off" />
+            <ul class="nav nav-underline"
+                hx-target="#details"
+                hx-include="#service">
+              <li class="nav-item">
+                <a class="nav-link"
+                   hx-get="/showUsers/off">
+                  Details
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link"
+                   hx-get="/showUsers/on">
+                  Users
+                </a>
+              </li>
+            </ul>
+            <div id="details">
+              {{ template "details.html" .details }}
+            </div>
           </div>
         </div>
       </div>

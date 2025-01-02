@@ -1,8 +1,8 @@
 <div class="col d-flex flex-column vh-100" style="max-height: 100vh">
   <div class="row">
-    <p class="text-end">
+    <div class="text-end shadow-sm p-2">
        {{len .}} Dienste verfügbar
-    </p>
+    </div>
   </div>
   <div class="row flex-grow-1 overflow-auto border">
     <div class="col">
@@ -10,7 +10,7 @@
         <tbody hx-target="#details">
           {{range .}}
           <tr>
-            <td hx-get="/details/{{.}}">
+            <td hx-get="/details/{{.}}" hx-include="#showUsers">
               {{.}}
             </td>
           </tr>

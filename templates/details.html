@@ -1,14 +1,21 @@
-<form id="details">
+{{if eq .ShowUsers "off"}}
+<form>
   <div class="input-group">
     <span class="input-group-text">Name</span>
-    <input type="text" class="form-control" readonly value="{{.}}">
+    <input type="text" class="form-control" readonly
+           value="{{.Service}}">
   </div>
   <div class="input-group">
     <span class="input-group-text">Beschreibung</span>
-    <input type="text" class="form-control" readonly value="Description-{{.}}">
+    <input type="text" class="form-control" readonly
+           value="Description-{{.Service}}">
   </div>
   <div class="input-group">
     <span class="input-group-text">Verantwortung</span>
-    <input type="text" class="form-control" readonly value="Owner-{{.}}">
+    <input type="text" class="form-control" readonly
+           value="Owner-{{.Service}}">
   </div>
 </form>
+{{else}}
+Users of {{.Service}}
+{{end}}
