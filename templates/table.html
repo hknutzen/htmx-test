@@ -2,11 +2,11 @@
   <!-- rembember selected service -->
   <input type="hidden" id="service" name="service"
          value="{{.Details.Name}}" />
-  <div class="text-end p-2">
+  <div class="text-end bg-body p-2">
     {{len .Table}} Dienste verfügbar
   </div>
 
-  <div class="row overflow-auto">
+  <div class="row overflow-auto border">
     <table class="table table-striped">
       <tbody hx-target="#details"
              hx-include="#showUsers">
