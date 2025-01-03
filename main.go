@@ -57,6 +57,7 @@ type serviceDetails struct {
 	Owner       string
 	ShowUsers   string
 	Users       []*user
+	UOwner      string
 	Admins      []string
 }
 type user struct {
@@ -124,12 +125,14 @@ func getDetails(name string) serviceDetails {
 		}
 		users[i] = u
 	}
-	admins := getAdmins(users[0].Owner)
+	uOwner := users[0].Owner
+	admins := getAdmins(uOwner)
 	return serviceDetails{
 		Name:        name,
 		Description: "Description of " + name,
 		Owner:       "Owner-" + name,
 		Users:       users,
+		UOwner:      uOwner,
 		Admins:      admins,
 	}
 }
@@ -153,9 +156,13 @@ func showUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateAdmins(w http.ResponseWriter, r *http.Request) {
-	owner := r.PathValue("owner")
-	admins := getAdmins(owner)
-	if err := html.ExecuteTemplate(w, "admins.html", admins); err != nil {
+	uOwner := r.PathValue("owner")
+	admins := getAdmins(uOwner)
+	details := &serviceDetails{
+		UOwner: uOwner,
+		Admins: admins,
+	}
+	if err := html.ExecuteTemplate(w, "admins.html", details); err != nil {
 		panic(err)
 	}
 }
