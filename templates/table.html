@@ -1,22 +1,20 @@
-<div class="col d-flex flex-column vh-100" style="max-height: 100vh">
-  <div class="row">
-    <div class="text-end shadow-sm p-2">
-       {{len .}} Dienste verfügbar
-    </div>
+<div class="col d-flex flex-column h-100">
+  <div class="text-end shadow-sm p-2">
+    {{len .}} Dienste verfügbar
   </div>
-  <div class="row flex-grow-1 overflow-auto border">
-    <div class="col">
-      <table class="table table-striped">
-        <tbody hx-target="#details">
-          {{range .}}
-          <tr>
-            <td hx-get="/details/{{.}}" hx-include="#showUsers">
-              {{.}}
-            </td>
-          </tr>
-          {{end}}
-        </tbody>
-      </table>
-    </div>
+
+  <div class="row overflow-auto">
+    <table class="table table-striped">
+      <tbody hx-target="#details"
+             hx-include="#showUsers">
+        {{range .}}
+        <tr>
+          <td hx-get="/details/{{.}}">
+            {{.}}
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
   </div>
 </div>

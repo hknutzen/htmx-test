@@ -23,11 +23,36 @@
     <main>
       <div class="container-fluid">
         <div class="row">
-          <div class="col">
+          <div class="col d-flex flex-column vh-100"
+               style="max-height: 100vh">
             <!-- rembember selected service -->
             <input type="hidden" id="service" name="service"
                    value="{{.details.Service}}" />
-            {{ template "table.html" .table }}
+            <ul class="nav nav-underline"
+                hx-target="#serviceList"
+                hx-include="#showUsers">
+              <li class="nav-item">
+                <a class="nav-link"
+                   hx-get="/serviceList/owner">
+                  Eigene
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link"
+                   hx-get="/serviceList/user">
+                  Genutzte
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link"
+                   hx-get="/serviceList/visible">
+                  Nutzbare
+                </a>
+              </li>
+            </ul>
+            <div id="serviceList" class="row overflow-auto">
+              {{ template "table.html" .table }}
+            </div>
           </div>
           <div class="col-8">
             <!-- rembember if details or users are shown -->
