@@ -81,7 +81,7 @@ func updateServiceList(w http.ResponseWriter, r *http.Request) {
 	}
 	details := params.Details
 	details.ShowUsers = r.URL.Query().Get("showUsers")
-	fmt.Fprintln(w, `<div id="details" hx-swap-oob="true">`)
+	fmt.Fprintln(w, `<div id="details" hx-swap-oob="innerHTML ">`)
 	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
 		panic(err)
 	}
