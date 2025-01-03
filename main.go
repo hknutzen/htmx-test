@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gorilla/handlers"
@@ -42,6 +43,7 @@ func main() {
 	mux.Handle("GET /serviceList/{type}", http.HandlerFunc(updateServiceList))
 	mux.Handle("GET /details/{service}", http.HandlerFunc(updateDetails))
 	mux.Handle("GET /showUsers/{state}", http.HandlerFunc(showUsers))
+	mux.Handle("GET /admins/{owner}", http.HandlerFunc(updateAdmins))
 	log.Fatal(http.ListenAndServe(":8080", handlers.RecoveryHandler()(mux)))
 }
 
@@ -55,6 +57,7 @@ type serviceDetails struct {
 	Owner       string
 	ShowUsers   string
 	Users       []*user
+	Admins      []string
 }
 type user struct {
 	Name  string
@@ -121,11 +124,13 @@ func getDetails(name string) serviceDetails {
 		}
 		users[i] = u
 	}
+	admins := getAdmins(users[0].Owner)
 	return serviceDetails{
 		Name:        name,
 		Description: "Description of " + name,
 		Owner:       "Owner-" + name,
 		Users:       users,
+		Admins:      admins,
 	}
 }
 
@@ -145,6 +150,30 @@ func showUsers(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	setHiddenOOB(w, "showUsers", details.ShowUsers)
+}
+
+func updateAdmins(w http.ResponseWriter, r *http.Request) {
+	owner := r.PathValue("owner")
+	admins := getAdmins(owner)
+	if err := html.ExecuteTemplate(w, "admins.html", admins); err != nil {
+		panic(err)
+	}
+}
+
+func getAdmins(owner string) []string {
+	if owner == "" {
+		return nil
+	}
+	c := owner[len(owner)-1:]
+	i, _ := strconv.Atoi(c)
+	if i == 0 {
+		i = 1
+	}
+	admins := make([]string, i)
+	for i := range admins {
+		admins[i] = fmt.Sprintf("admin-%d@example.com", i+1)
+	}
+	return admins
 }
 
 func setHiddenOOB(w http.ResponseWriter, name, value string) {

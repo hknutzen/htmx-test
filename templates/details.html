@@ -17,18 +17,19 @@
   </div>
 </form>
 {{else}}
-<div class="position-relative" style="height: 100%; overflow-x: auto;">
+<div class="col d-flex flex-column h-100">
+  <div class="row overflow-auto">
   <table class="table table-striped">
-    <thead class="table-light sticky-top top-0">
+    <thead class="table-primary sticky-top top-0">
       <tr>
         <th>Name</th>
         <th>IP-Adressen</th>
         <th>Verantwortungsbereich</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody hx-target="#admins">
       {{range .Users}}
-      <tr>
+      <tr hx-get="/admins/{{.Owner}}">
         <td>{{.Name}}</td>
         <td>{{.IP}}</td>
         <td>{{.Owner}}</td>
@@ -36,5 +37,9 @@
       {{end}}
     </tbody>
   </table>
+  </div>
+  <div id="admins" class="row overflow-auto">
+    {{ template "admins.html" .Admins }}
+  </div>
 </div>
 {{end}}
