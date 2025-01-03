@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/handlers"
 )
@@ -90,13 +89,17 @@ func updateServiceList(w http.ResponseWriter, r *http.Request) {
 
 func getServiceListParams(listType string) templateParams {
 	size := 0
+	var prefix string
 	switch listType {
 	case "owner":
+		prefix = "Eigener"
 		size = 20
 	case "user":
+		prefix = "Genutzter"
 		size = 21845
+	case "visible":
+		prefix = "Nutzbarer"
 	}
-	prefix := strings.ToUpper(listType)
 	table := []string{}
 	for i := range size {
 		table = append(table, fmt.Sprintf("%s-Service-%d", prefix, i+1))
