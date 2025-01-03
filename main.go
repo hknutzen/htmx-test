@@ -37,6 +37,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("GET /htmx.min.js", http.FileServer(http.FS(htmx)))
 	mux.Handle("GET /bootstrap.min.css", http.FileServer(http.FS(css)))
+
 	mux.Handle("GET /", http.HandlerFunc(index))
 	mux.Handle("GET /serviceList/{type}", http.HandlerFunc(updateServiceList))
 	mux.Handle("GET /details/{service}", http.HandlerFunc(updateDetails))
@@ -44,87 +45,108 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", handlers.RecoveryHandler()(mux)))
 }
 
+type templateParams struct {
+	Table   []string
+	Details *serviceDetails
+}
 type serviceDetails struct {
-	Service   string
-	ShowUsers string
+	Name        string
+	Description string
+	Owner       string
+	ShowUsers   string
+	Users       []*user
+}
+type user struct {
+	Name  string
+	IP    string
+	Owner string
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	table := getServiceList("owner")
-	first := ""
-	if len(table) > 0 {
-		first = table[0]
-	}
-	args := map[string]any{
-		"table": table,
-		"details": &serviceDetails{
-			Service:   first,
-			ShowUsers: "off",
-		},
-	}
-	if err := html.ExecuteTemplate(w, "index.html", args); err != nil {
+	params := getServiceListParams("owner")
+	if err := html.ExecuteTemplate(w, "index.html", params); err != nil {
 		panic(err)
 	}
 }
 
 func updateServiceList(w http.ResponseWriter, r *http.Request) {
 	listType := r.PathValue("type")
-	table := getServiceList(listType)
-	if err := html.ExecuteTemplate(w, "table.html", table); err != nil {
+	params := getServiceListParams(listType)
+	if err := html.ExecuteTemplate(w, "table.html", params); err != nil {
 		panic(err)
 	}
-	if len(table) == 0 {
+	if len(params.Table) == 0 {
 		fmt.Fprintln(w, `<div id="details" hx-swap-oob="true"></div>`)
 	} else {
-		details := &serviceDetails{
-			Service:   table[0],
-			ShowUsers: r.URL.Query().Get("showUsers"),
-		}
+		details := params.Details
+		details.ShowUsers = r.URL.Query().Get("showUsers")
 		fmt.Fprintln(w, `<div id="details" hx-swap-oob="true">`)
 		if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
 			panic(err)
 		}
 		fmt.Fprintln(w, `</div`)
-		fmt.Fprintf(w,
-			`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
-			"service", "service", details.Service)
 	}
 }
 
-func getServiceList(listType string) []string {
+func getServiceListParams(listType string) templateParams {
 	size := 0
 	switch listType {
 	case "owner":
 		size = 20
 	case "user":
-		size = 10000
+		size = 21845
 	}
 	prefix := strings.ToUpper(listType)
 	table := []string{}
 	for i := range size {
 		table = append(table, fmt.Sprintf("%s-Service-%d", prefix, i+1))
 	}
-	return table
+	var details serviceDetails
+	if len(table) > 0 {
+		details = getDetails(table[0])
+	}
+	details.ShowUsers = "off"
+	return templateParams{
+		Table:   table,
+		Details: &details,
+	}
+}
+
+func getDetails(name string) serviceDetails {
+	if name == "" {
+		return serviceDetails{}
+	}
+	users := make([]*user, 7)
+	for i := range users {
+		u := &user{
+			Name:  fmt.Sprintf("host:h%d-of-%s", i+1, name),
+			IP:    fmt.Sprintf("10.1.2.%d", i+1),
+			Owner: fmt.Sprintf("Owner-%d", i+1),
+		}
+		users[i] = u
+	}
+	return serviceDetails{
+		Name:        name,
+		Description: "Description of " + name,
+		Owner:       "Owner-" + name,
+		Users:       users,
+	}
 }
 
 func updateDetails(w http.ResponseWriter, r *http.Request) {
-	details := &serviceDetails{
-		Service:   r.PathValue("service"),
-		ShowUsers: r.URL.Query().Get("showUsers"),
-	}
+	details := getDetails(r.PathValue("service"))
+	details.ShowUsers = r.URL.Query().Get("showUsers")
 	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
 		panic(err)
 	}
 	fmt.Fprintf(w,
 		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
-		"service", "service", details.Service)
+		"service", "service", details.Name)
 }
 
 func showUsers(w http.ResponseWriter, r *http.Request) {
-	details := &serviceDetails{
-		Service:   r.URL.Query().Get("service"),
-		ShowUsers: r.PathValue("state"),
-	}
+	details := getDetails(r.URL.Query().Get("service"))
+	details.ShowUsers = r.PathValue("state")
 	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
 		panic(err)
 	}

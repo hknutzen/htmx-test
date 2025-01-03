@@ -25,9 +25,6 @@
         <div class="row">
           <div class="col d-flex flex-column vh-100"
                style="max-height: 100vh">
-            <!-- rembember selected service -->
-            <input type="hidden" id="service" name="service"
-                   value="{{.details.Service}}" />
             <ul class="nav nav-underline"
                 hx-target="#serviceList"
                 hx-include="#showUsers">
@@ -51,10 +48,11 @@
               </li>
             </ul>
             <div id="serviceList" class="row overflow-auto">
-              {{ template "table.html" .table }}
+              {{ template "table.html" . }}
             </div>
           </div>
-          <div class="col-8">
+          <div class="col-8 d-flex flex-column vh-100"
+               style="max-height: 100vh">
             <!-- rembember if details or users are shown -->
             <input type="hidden" id="showUsers" name="showUsers" value="off" />
             <ul class="nav nav-underline"
@@ -73,8 +71,8 @@
                 </a>
               </li>
             </ul>
-            <div id="details">
-              {{ template "details.html" .details }}
+            <div id="details" class="row overflow-auto">
+              {{ template "details.html" .Details }}
             </div>
           </div>
         </div>

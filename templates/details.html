@@ -1,21 +1,40 @@
-{{if eq .ShowUsers "off"}}
+{{if eq .ShowUsers "on" | not}}
 <form>
   <div class="input-group">
     <span class="input-group-text">Name</span>
     <input type="text" class="form-control" readonly
-           value="{{.Service}}">
+           value="{{.Name}}">
   </div>
   <div class="input-group">
     <span class="input-group-text">Beschreibung</span>
     <input type="text" class="form-control" readonly
-           value="Description-{{.Service}}">
+           value="{{.Description}}">
   </div>
   <div class="input-group">
     <span class="input-group-text">Verantwortung</span>
     <input type="text" class="form-control" readonly
-           value="Owner-{{.Service}}">
+           value="{{.Owner}}">
   </div>
 </form>
 {{else}}
-Users of {{.Service}}
+<div class="position-relative" style="height: 100%; overflow-x: auto;">
+  <table class="table table-striped">
+    <thead class="table-light sticky-top top-0">
+      <tr>
+        <th>Name</th>
+        <th>IP-Adressen</th>
+        <th>Verantwortungsbereich</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Users}}
+      <tr>
+        <td>{{.Name}}</td>
+        <td>{{.IP}}</td>
+        <td>{{.Owner}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
 {{end}}

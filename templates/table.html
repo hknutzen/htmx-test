@@ -1,13 +1,16 @@
 <div class="col d-flex flex-column h-100">
+  <!-- rembember selected service -->
+  <input type="hidden" id="service" name="service"
+         value="{{.Details.Name}}" />
   <div class="text-end shadow-sm p-2">
-    {{len .}} Dienste verfügbar
+    {{len .Table}} Dienste verfügbar
   </div>
 
   <div class="row overflow-auto">
     <table class="table table-striped">
       <tbody hx-target="#details"
              hx-include="#showUsers">
-        {{range .}}
+        {{range .Table}}
         <tr>
           <td hx-get="/details/{{.}}">
             {{.}}
