@@ -75,17 +75,13 @@ func updateServiceList(w http.ResponseWriter, r *http.Request) {
 	if err := html.ExecuteTemplate(w, "table.html", params); err != nil {
 		panic(err)
 	}
-	if len(params.Table) == 0 {
-		fmt.Fprintln(w, `<div id="details" hx-swap-oob="true"></div>`)
-	} else {
-		details := params.Details
-		details.ShowUsers = r.URL.Query().Get("showUsers")
-		fmt.Fprintln(w, `<div id="details" hx-swap-oob="true">`)
-		if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
-			panic(err)
-		}
-		fmt.Fprintln(w, `</div`)
+	details := params.Details
+	details.ShowUsers = r.URL.Query().Get("showUsers")
+	fmt.Fprintln(w, `<div id="details" hx-swap-oob="true">`)
+	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
+		panic(err)
 	}
+	fmt.Fprintln(w, `</div`)
 }
 
 func getServiceListParams(listType string) templateParams {
@@ -139,9 +135,7 @@ func updateDetails(w http.ResponseWriter, r *http.Request) {
 	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
 		panic(err)
 	}
-	fmt.Fprintf(w,
-		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
-		"service", "service", details.Name)
+	setHiddenOOB(w, "service", details.Name)
 }
 
 func showUsers(w http.ResponseWriter, r *http.Request) {
@@ -150,7 +144,11 @@ func showUsers(w http.ResponseWriter, r *http.Request) {
 	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
 		panic(err)
 	}
+	setHiddenOOB(w, "showUsers", details.ShowUsers)
+}
+
+func setHiddenOOB(w http.ResponseWriter, name, value string) {
 	fmt.Fprintf(w,
 		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
-		"showUsers", "showUsers", details.ShowUsers)
+		name, name, value)
 }
