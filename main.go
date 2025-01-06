@@ -64,7 +64,7 @@ type user struct {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	params := getServiceListParams("owner")
+	params := getServiceListParams("user")
 	if err := html.ExecuteTemplate(w, "index.html", params); err != nil {
 		panic(err)
 	}
@@ -119,11 +119,11 @@ func getServiceListParams(serviceType string) templateParams {
 	var prefix string
 	switch serviceType {
 	case "owner":
-		prefix = "Eigener"
-		size = 20
-	case "user":
 		prefix = "Genutzter"
 		size = 21845
+	case "user":
+		prefix = "Eigener"
+		size = 20
 	case "visible":
 		prefix = "Nutzbarer"
 	}
