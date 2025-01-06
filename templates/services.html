@@ -1,0 +1,56 @@
+<div class="col d-flex flex-column vh-100"
+     style="max-height: 100vh">
+  <ul class="nav nav-underline bg-light px-2 h5"
+    hx-target="#services"
+    hx-include="#showUsers">
+    <li class="nav-item">
+      <a class="nav-link {{if eq "owner" .ServiceType}}active{{end}}"
+         hx-get="/services/owner">
+        Eigene
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{if eq "user" .ServiceType}}active{{end}}"
+         hx-get="/services/user">
+        Genutzte
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{if eq "visible" .ServiceType}}active{{end}}"
+         hx-get="/services/visible">
+        Nutzbare
+      </a>
+    </li>
+  </ul>
+  <div class="row overflow-auto">
+    <div class="col d-flex flex-column h-100">
+      <!-- rembember selected service -->
+      <input type="hidden" id="service" name="service"
+             value="{{.Details.Name}}" />
+      <div class="text-end bg-body p-2">
+        {{len .ServiceList}} Dienste verfügbar
+      </div>
+
+      <div class="row overflow-auto border">
+        <table class="table table-striped">
+          <tbody hx-target="#service-details"
+                 hx-include="#showUsers">
+            {{range .ServiceList}}
+            <tr>
+              <td hx-get="/details/{{.}}">
+                {{.}}
+              </td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="service-details"
+     class="col-8 d-flex flex-column vh-100"
+     style="max-height: 100vh">
+  {{ template "service-details.html" .Details }}
+</div>

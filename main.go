@@ -15,13 +15,10 @@ import (
 var (
 	//go:embed all:templates/*
 	templateFS embed.FS
-
 	//go:embed htmx.min.js
 	htmx embed.FS
-
 	//go:embed bootstrap.min.css
 	css embed.FS
-
 	// Parsed templates
 	html *template.Template
 )
@@ -39,7 +36,7 @@ func main() {
 	mux.Handle("GET /bootstrap.min.css", http.FileServer(http.FS(css)))
 
 	mux.Handle("GET /", http.HandlerFunc(index))
-	mux.Handle("GET /serviceList/{type}", http.HandlerFunc(updateServiceList))
+	mux.Handle("GET /services/{type}", http.HandlerFunc(updateServices))
 	mux.Handle("GET /details/{service}", http.HandlerFunc(updateDetails))
 	mux.Handle("GET /showUsers/{state}", http.HandlerFunc(showUsers))
 	mux.Handle("GET /admins/{owner}", http.HandlerFunc(updateAdmins))
@@ -73,34 +70,28 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func updateServiceList(w http.ResponseWriter, r *http.Request) {
+func updateServices(w http.ResponseWriter, r *http.Request) {
 	serviceType := r.PathValue("type")
 	params := getServiceListParams(serviceType)
-	if err := html.ExecuteTemplate(w, "service-list.html", params); err != nil {
+	params.Details.ShowUsers = r.URL.Query().Get("showUsers")
+	if err := html.ExecuteTemplate(w, "services.html", params); err != nil {
 		panic(err)
 	}
-	details := params.Details
-	details.ShowUsers = r.URL.Query().Get("showUsers")
-	fmt.Fprintln(w, `<div id="details" hx-swap-oob="innerHTML ">`)
-	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
-		panic(err)
-	}
-	fmt.Fprintln(w, `</div`)
 }
 
 func updateDetails(w http.ResponseWriter, r *http.Request) {
-	details := getDetails(r.PathValue("service"))
-	details.ShowUsers = r.URL.Query().Get("showUsers")
-	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
+	dt := getDetails(r.PathValue("service"))
+	dt.ShowUsers = r.URL.Query().Get("showUsers")
+	if err := html.ExecuteTemplate(w, "service-details.html", dt); err != nil {
 		panic(err)
 	}
-	setHiddenOOB(w, "service", details.Name)
+	setHiddenOOB(w, "service", dt.Name)
 }
 
 func showUsers(w http.ResponseWriter, r *http.Request) {
-	details := getDetails(r.URL.Query().Get("service"))
-	details.ShowUsers = r.PathValue("state")
-	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
+	dt := getDetails(r.URL.Query().Get("service"))
+	dt.ShowUsers = r.PathValue("state")
+	if err := html.ExecuteTemplate(w, "service-details.html", dt); err != nil {
 		panic(err)
 	}
 }

@@ -41,22 +41,11 @@
     </style>
   </head>
   <body hx-indicator=".loading-bar">
-    <main>
     <div class="loading-bar"></div>
-      <div class="container-fluid bg-light">
-        <div class="row">
-          <div id="serviceList"
-               class="col d-flex flex-column vh-100"
-               style="max-height: 100vh">
-            {{ template "service-list.html" . }}
-          </div>
-          <div id="details"
-               class="col-8 d-flex flex-column vh-100"
-               style="max-height: 100vh">
-            {{ template "details.html" .Details }}
-          </div>
-        </div>
+    <div class="container-fluid bg-light">
+      <div id="services" class="row">
+        {{ template "services.html" . }}
       </div>
-    </main>
+    </div>
   </body>
 </html>

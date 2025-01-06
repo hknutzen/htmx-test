@@ -1,7 +1,7 @@
 <!-- remember if details or users are shown -->
 <input type="hidden" id="showUsers" name="showUsers" value="{{.ShowUsers}}" />
 <ul class="nav nav-underline bg-light px-2 h5"
-    hx-target="#details"
+    hx-target="#service-details"
     hx-include="#service">
   <li class="nav-item">
     <a class="nav-link {{if eq "off" .ShowUsers}}active{{end}}"
