@@ -1,15 +1,14 @@
-
-  <table class="table table-striped">
-    <thead class="table-primary sticky-top top-0">
-      <tr>
-        <th>Verantwortung für {{.UOwner}}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{range .Admins}}
-      <tr>
-        <td>{{.}}</td>
-      </tr>
-      {{end}}
-    </tbody>
-  </table>
+<table class="table table-striped">
+  <thead class="table-primary sticky-top top-0">
+    <tr>
+      <th>Verantwortung für {{.UOwner}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Admins}}
+    <tr>
+      <td>{{.}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
