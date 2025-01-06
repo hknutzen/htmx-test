@@ -1,45 +1,65 @@
-{{if eq .ShowUsers "on" | not}}
-<form>
-  <div class="input-group">
-    <span class="input-group-text">Name</span>
-    <input type="text" class="form-control" readonly
-           value="{{.Name}}">
+<!-- remember if details or users are shown -->
+<input type="hidden" id="showUsers" name="showUsers" value="{{.ShowUsers}}" />
+<ul class="nav nav-underline bg-light px-2 h5"
+    hx-target="#details"
+    hx-include="#service">
+  <li class="nav-item">
+    <a class="nav-link {{if eq "off" .ShowUsers}}active{{end}}"
+       hx-get="/showUsers/off">
+      Details zum Dienst
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {{if eq "on" .ShowUsers}}active{{end}}"
+       hx-get="/showUsers/on">
+      Benutzer (User) des Dienstes
+    </a>
+  </li>
+</ul>
+<div class="row overflow-auto">
+  {{if eq .ShowUsers "on" | not}}
+  <form>
+    <div class="input-group">
+      <span class="input-group-text">Name</span>
+      <input type="text" class="form-control" readonly
+             value="{{.Name}}">
+    </div>
+    <div class="input-group">
+      <span class="input-group-text">Beschreibung</span>
+      <input type="text" class="form-control" readonly
+             value="{{.Description}}">
+    </div>
+    <div class="input-group">
+      <span class="input-group-text">Verantwortung</span>
+      <input type="text" class="form-control" readonly
+             value="{{.Owner}}">
+    </div>
+  </form>
+  {{else}}
+  <div class="col d-flex flex-column h-100">
+    <div class="row overflow-auto">
+      <table class="table table-striped">
+        <thead class="table-primary sticky-top top-0">
+          <tr>
+            <th>Name</th>
+            <th>IP-Adressen</th>
+            <th>Verantwortungsbereich</th>
+          </tr>
+        </thead>
+        <tbody hx-target="#admins">
+          {{range .Users}}
+          <tr hx-get="/admins/{{.Owner}}">
+            <td>{{.Name}}</td>
+            <td>{{.IP}}</td>
+            <td>{{.Owner}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    <div id="admins" class="row overflow-auto">
+      {{ template "admins.html" . }}
+    </div>
   </div>
-  <div class="input-group">
-    <span class="input-group-text">Beschreibung</span>
-    <input type="text" class="form-control" readonly
-           value="{{.Description}}">
-  </div>
-  <div class="input-group">
-    <span class="input-group-text">Verantwortung</span>
-    <input type="text" class="form-control" readonly
-           value="{{.Owner}}">
-  </div>
-</form>
-{{else}}
-<div class="col d-flex flex-column h-100">
-  <div class="row overflow-auto">
-  <table class="table table-striped">
-    <thead class="table-primary sticky-top top-0">
-      <tr>
-        <th>Name</th>
-        <th>IP-Adressen</th>
-        <th>Verantwortungsbereich</th>
-      </tr>
-    </thead>
-    <tbody hx-target="#admins">
-      {{range .Users}}
-      <tr hx-get="/admins/{{.Owner}}">
-        <td>{{.Name}}</td>
-        <td>{{.IP}}</td>
-        <td>{{.Owner}}</td>
-      </tr>
-      {{end}}
-    </tbody>
-  </table>
-  </div>
-  <div id="admins" class="row overflow-auto">
-    {{ template "admins.html" . }}
-  </div>
+  {{end}}
 </div>
-{{end}}

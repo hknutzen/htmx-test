@@ -50,29 +50,10 @@
                style="max-height: 100vh">
             {{ template "service-list.html" . }}
           </div>
-          <div class="col-8 d-flex flex-column vh-100"
+          <div id="details"
+               class="col-8 d-flex flex-column vh-100"
                style="max-height: 100vh">
-            <!-- rembember if details or users are shown -->
-            <input type="hidden" id="showUsers" name="showUsers" value="off" />
-            <ul class="nav nav-underline bg-light px-2 h5"
-                hx-target="#details"
-                hx-include="#service">
-              <li class="nav-item">
-                <a class="nav-link"
-                   hx-get="/showUsers/off">
-                  Details zum Dienst
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link"
-                   hx-get="/showUsers/on">
-                  Benutzer (User) des Dienstes
-                </a>
-              </li>
-            </ul>
-            <div id="details" class="row overflow-auto">
-              {{ template "details.html" .Details }}
-            </div>
+            {{ template "details.html" .Details }}
           </div>
         </div>
       </div>

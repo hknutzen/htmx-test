@@ -88,6 +88,41 @@ func updateServiceList(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, `</div`)
 }
 
+func updateDetails(w http.ResponseWriter, r *http.Request) {
+	details := getDetails(r.PathValue("service"))
+	details.ShowUsers = r.URL.Query().Get("showUsers")
+	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
+		panic(err)
+	}
+	setHiddenOOB(w, "service", details.Name)
+}
+
+func showUsers(w http.ResponseWriter, r *http.Request) {
+	details := getDetails(r.URL.Query().Get("service"))
+	details.ShowUsers = r.PathValue("state")
+	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
+		panic(err)
+	}
+}
+
+func updateAdmins(w http.ResponseWriter, r *http.Request) {
+	uOwner := r.PathValue("owner")
+	admins := getAdmins(uOwner)
+	details := &serviceDetails{
+		UOwner: uOwner,
+		Admins: admins,
+	}
+	if err := html.ExecuteTemplate(w, "admins.html", details); err != nil {
+		panic(err)
+	}
+}
+
+func setHiddenOOB(w http.ResponseWriter, name, value string) {
+	fmt.Fprintf(w,
+		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
+		name, name, value)
+}
+
 func getServiceListParams(serviceType string) templateParams {
 	size := 0
 	var prefix string
@@ -142,36 +177,6 @@ func getDetails(name string) serviceDetails {
 	}
 }
 
-func updateDetails(w http.ResponseWriter, r *http.Request) {
-	details := getDetails(r.PathValue("service"))
-	details.ShowUsers = r.URL.Query().Get("showUsers")
-	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
-		panic(err)
-	}
-	setHiddenOOB(w, "service", details.Name)
-}
-
-func showUsers(w http.ResponseWriter, r *http.Request) {
-	details := getDetails(r.URL.Query().Get("service"))
-	details.ShowUsers = r.PathValue("state")
-	if err := html.ExecuteTemplate(w, "details.html", details); err != nil {
-		panic(err)
-	}
-	setHiddenOOB(w, "showUsers", details.ShowUsers)
-}
-
-func updateAdmins(w http.ResponseWriter, r *http.Request) {
-	uOwner := r.PathValue("owner")
-	admins := getAdmins(uOwner)
-	details := &serviceDetails{
-		UOwner: uOwner,
-		Admins: admins,
-	}
-	if err := html.ExecuteTemplate(w, "admins.html", details); err != nil {
-		panic(err)
-	}
-}
-
 func getAdmins(owner string) []string {
 	if owner == "" {
 		return nil
@@ -186,10 +191,4 @@ func getAdmins(owner string) []string {
 		admins[i] = fmt.Sprintf("admin-%d@example.com", i+1)
 	}
 	return admins
-}
-
-func setHiddenOOB(w http.ResponseWriter, name, value string) {
-	fmt.Fprintf(w,
-		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
-		name, name, value)
 }
