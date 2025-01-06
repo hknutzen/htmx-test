@@ -1,6 +1,9 @@
+<!-- rembember selected service -->
+<input type="hidden" id="service" name="service"
+       value="{{.Details.Name}}" />
 <div class="col d-flex flex-column vh-100"
      style="max-height: 100vh">
-  <ul class="nav nav-underline bg-light px-2 h5"
+  <ul class="nav nav-tabs bg-light px-2 h5"
     hx-target="#services"
     hx-include="#showUsers">
     <li class="nav-item">
@@ -24,9 +27,6 @@
   </ul>
   <div class="row overflow-auto">
     <div class="col d-flex flex-column h-100">
-      <!-- rembember selected service -->
-      <input type="hidden" id="service" name="service"
-             value="{{.Details.Name}}" />
       <div class="text-end bg-body p-2">
         {{len .ServiceList}} Dienste verfügbar
       </div>
