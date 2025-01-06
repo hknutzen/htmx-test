@@ -45,33 +45,10 @@
     <div class="loading-bar"></div>
       <div class="container-fluid bg-light">
         <div class="row">
-          <div class="col d-flex flex-column vh-100"
+          <div id="serviceList"
+               class="col d-flex flex-column vh-100"
                style="max-height: 100vh">
-            <ul class="nav nav-underline bg-light px-2 h5"
-                hx-target="#serviceList"
-                hx-include="#showUsers">
-              <li class="nav-item">
-                <a class="nav-link"
-                   hx-get="/serviceList/owner">
-                  Eigene
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link"
-                   hx-get="/serviceList/user">
-                  Genutzte
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link"
-                   hx-get="/serviceList/visible">
-                  Nutzbare
-                </a>
-              </li>
-            </ul>
-            <div id="serviceList" class="row overflow-auto">
-              {{ template "table.html" . }}
-            </div>
+            {{ template "service-list.html" . }}
           </div>
           <div class="col-8 d-flex flex-column vh-100"
                style="max-height: 100vh">

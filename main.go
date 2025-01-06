@@ -47,8 +47,9 @@ func main() {
 }
 
 type templateParams struct {
-	Table   []string
-	Details *serviceDetails
+	ServiceType string
+	ServiceList []string
+	Details     *serviceDetails
 }
 type serviceDetails struct {
 	Name        string
@@ -73,9 +74,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateServiceList(w http.ResponseWriter, r *http.Request) {
-	listType := r.PathValue("type")
-	params := getServiceListParams(listType)
-	if err := html.ExecuteTemplate(w, "table.html", params); err != nil {
+	serviceType := r.PathValue("type")
+	params := getServiceListParams(serviceType)
+	if err := html.ExecuteTemplate(w, "service-list.html", params); err != nil {
 		panic(err)
 	}
 	details := params.Details
@@ -87,10 +88,10 @@ func updateServiceList(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, `</div`)
 }
 
-func getServiceListParams(listType string) templateParams {
+func getServiceListParams(serviceType string) templateParams {
 	size := 0
 	var prefix string
-	switch listType {
+	switch serviceType {
 	case "owner":
 		prefix = "Eigener"
 		size = 20
@@ -110,8 +111,9 @@ func getServiceListParams(listType string) templateParams {
 	}
 	details.ShowUsers = "off"
 	return templateParams{
-		Table:   table,
-		Details: &details,
+		ServiceType: serviceType,
+		ServiceList: table,
+		Details:     &details,
 	}
 }
 
