@@ -24,6 +24,12 @@
         Nutzbare
       </a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link {{if eq "search" .ServiceType}}active{{end}}"
+         data-bs-toggle="modal" data-bs-target="#searchModal">
+        Suche
+      </a>
+    </li>
   </ul>
   <div class="row overflow-auto">
     <div class="col d-flex flex-column h-100">

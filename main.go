@@ -17,8 +17,10 @@ var (
 	templateFS embed.FS
 	//go:embed htmx.min.js
 	htmx embed.FS
+	//go:embed bootstrap.bundle.min.js
+	bootstrapJS embed.FS
 	//go:embed bootstrap.min.css
-	css embed.FS
+	bootstrapCSS embed.FS
 	// Parsed templates
 	html *template.Template
 )
@@ -33,7 +35,9 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /htmx.min.js", http.FileServer(http.FS(htmx)))
-	mux.Handle("GET /bootstrap.min.css", http.FileServer(http.FS(css)))
+	mux.Handle("GET /bootstrap.bundle.min.js",
+		http.FileServer(http.FS(bootstrapJS)))
+	mux.Handle("GET /bootstrap.min.css", http.FileServer(http.FS(bootstrapCSS)))
 
 	mux.Handle("GET /", http.HandlerFunc(index))
 	mux.Handle("GET /services/{type}", http.HandlerFunc(updateServices))
@@ -52,6 +56,7 @@ type serviceDetails struct {
 	Name        string
 	Description string
 	Owner       string
+	QueryParams string
 	ShowUsers   string
 	Users       []*user
 	UOwner      string
@@ -74,6 +79,7 @@ func updateServices(w http.ResponseWriter, r *http.Request) {
 	serviceType := r.PathValue("type")
 	params := getServiceListParams(serviceType)
 	params.Details.ShowUsers = r.URL.Query().Get("showUsers")
+	params.Details.QueryParams = r.URL.String()
 	if err := html.ExecuteTemplate(w, "services.html", params); err != nil {
 		panic(err)
 	}
@@ -126,6 +132,9 @@ func getServiceListParams(serviceType string) templateParams {
 		size = 20
 	case "visible":
 		prefix = "Nutzbarer"
+	case "search":
+		prefix = "Gesuchter"
+		size = 5
 	}
 	table := []string{}
 	for i := range size {

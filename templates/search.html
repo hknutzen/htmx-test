@@ -1,0 +1,135 @@
+<div class="modal fade" id="searchModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" id="search-form">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Suche</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal">
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs px-2 h5">
+          <li class="nav-item">
+            <a class="nav-link active"
+               data-bs-toggle="tab" data-bs-target="#in-Rules">
+              in Regeln
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"
+               data-bs-toggle="tab" data-bs-target="#in-Descr">
+              in Beschreibung
+            </a>
+          </li>
+        </ul>
+        <br/>
+        <div class="tab-content">
+          <div class="tab-pane active" id="in-Rules" role="tabpanel">
+            <div class="row">
+              <div class="col">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="ip1" name="ip1">
+                  <label for="ip1">IP 1</label>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="ip2" name="ip2">
+                  <label for="ip2">IP 2</label>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="protocol" name="protocol">
+                  <label for="protocol">Protokoll</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="supernets">
+              <label class="form-check-label" for="supernets">
+                Übergeordnete Netze einbeziehen
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="subnets"
+                     checked>
+          <label class="form-check-label" for="subnets">
+            Enthaltene Netze einbeziehen
+          </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="ranges">
+              <label class="form-check-label" for="ranges">
+                Port-Ranges einbeziehen
+              </label>
+            </div>
+          </div>
+          <div class="tab-pane" id="in-Descr" role="tabpanel">
+            <div class="form-floating">
+              <input type="text" class="form-control"
+                     name="search-text" id="search-text">
+              <label for="search-text">Suchbegriff</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox"
+                     name="search-descr" id="search-descr"
+                     checked>
+              <label class="form-check-label" for="search-descr">
+                Suche auch in Dienstbeschreibungen
+              </label>
+            </div>
+          </div>
+        </div>
+        <hr/>
+        In welchen Diensten suchen?
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="owned" checked>
+          <label class="form-check-label" for="owned">
+            Eigene
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="used" checked>
+          <label class="form-check-label" for="used">
+            Genutzte
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="visible">
+          <label class="form-check-label" for="visible">
+            Nutzbare
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="disable-at">
+          <label class="form-check-label" for="disable-at">
+            Nur befristete Dienste suchen
+          </label>
+        </div>
+        <hr/>
+        Allgemeine Optionen
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="case-sensitive">
+          <label class="form-check-label" for="case-sensitive">
+            Groß-/Kleinschreibung beachten
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="exact">
+          <label class="form-check-label" for="exact">
+            Exakte Übereinstimmung
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary"
+                data-bs-dismiss="modal"
+                hx-include="previous .tab-pane.active,#showUsers"
+                hx-get="/services/search"
+                hx-target="#services">
+          Suchen
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

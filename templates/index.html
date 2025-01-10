@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <script src="/bootstrap.bundle.min.js"></script>
     <script src="/htmx.min.js"></script>
     <title>HTMX Test</title>
-    <link rel="stylesheet" href="/bootstrap.min.css">
     <style type="text/css">
       body {
           min-height: 100vh;
@@ -42,6 +43,7 @@
   </head>
   <body hx-indicator=".loading-bar">
     <div class="loading-bar"></div>
+    {{ template "search.html" . }}
     <div class="container-fluid bg-light">
       <div id="services" class="row">
         {{ template "services.html" . }}

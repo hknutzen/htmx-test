@@ -35,6 +35,9 @@
              value="{{.Owner}}">
     </div>
   </form>
+  <div class="bg-body p-2">
+    {{ .QueryParams }}
+  </div>
   {{else}}
   <div class="col d-flex flex-column h-100">
     <div class="row overflow-auto">
