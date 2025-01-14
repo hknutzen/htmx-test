@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/gorilla/handlers"
@@ -79,7 +80,7 @@ func updateServices(w http.ResponseWriter, r *http.Request) {
 	serviceType := r.PathValue("type")
 	params := getServiceListParams(serviceType)
 	params.Details.ShowUsers = r.URL.Query().Get("showUsers")
-	params.Details.QueryParams = r.URL.String()
+	params.Details.QueryParams, _ = url.QueryUnescape(r.URL.String())
 	if err := html.ExecuteTemplate(w, "services.html", params); err != nil {
 		panic(err)
 	}

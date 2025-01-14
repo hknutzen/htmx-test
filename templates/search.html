@@ -27,38 +27,42 @@
             <div class="row">
               <div class="col">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="ip1" name="ip1">
+                  <input type="text" class="form-control"
+                         name="ip1" id="ip1">
                   <label for="ip1">IP 1</label>
                 </div>
               </div>
               <div class="col">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="ip2" name="ip2">
+                  <input type="text" class="form-control" name="ip2" id="ip2">
                   <label for="ip2">IP 2</label>
                 </div>
               </div>
               <div class="col">
                 <div class="form-floating">
-                  <input type="text" class="form-control" id="protocol" name="protocol">
+                  <input type="text" class="form-control"
+                         name="protocol" id="protocol">
                   <label for="protocol">Protokoll</label>
                 </div>
               </div>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="supernets">
+              <input class="form-check-input" type="checkbox"
+                     name="supernets" id="supernets">
               <label class="form-check-label" for="supernets">
                 Übergeordnete Netze einbeziehen
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="subnets"
-                     checked>
-          <label class="form-check-label" for="subnets">
-            Enthaltene Netze einbeziehen
-          </label>
+              <input class="form-check-input" type="checkbox"
+                     name="subnets" id="subnets" checked>
+              <label class="form-check-label" for="subnets">
+                Enthaltene Netze einbeziehen
+              </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="ranges">
+              <input class="form-check-input" type="checkbox"
+                     name="ranges" id="ranges">
               <label class="form-check-label" for="ranges">
                 Port-Ranges einbeziehen
               </label>
@@ -80,28 +84,33 @@
             </div>
           </div>
         </div>
+        <div id="search-options">
         <hr/>
         In welchen Diensten suchen?
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="owned" checked>
+          <input class="form-check-input" type="checkbox"
+                 name ="owned" id="owned" checked>
           <label class="form-check-label" for="owned">
             Eigene
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="used" checked>
+          <input class="form-check-input" type="checkbox"
+                 name="used" id="used" checked>
           <label class="form-check-label" for="used">
             Genutzte
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="visible">
+          <input class="form-check-input" type="checkbox"
+                 name="visible" id="visible">
           <label class="form-check-label" for="visible">
             Nutzbare
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="disable-at">
+          <input class="form-check-input" type="checkbox"
+                 name="disable-at" id="disable-at">
           <label class="form-check-label" for="disable-at">
             Nur befristete Dienste suchen
           </label>
@@ -109,22 +118,25 @@
         <hr/>
         Allgemeine Optionen
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="case-sensitive">
+          <input class="form-check-input" type="checkbox"
+                 name="case-sensitive" id="case-sensitive">
           <label class="form-check-label" for="case-sensitive">
             Groß-/Kleinschreibung beachten
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="exact">
+          <input class="form-check-input" type="checkbox"
+                 name="exact" id="exact">
           <label class="form-check-label" for="exact">
             Exakte Übereinstimmung
           </label>
+        </div>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary"
                 data-bs-dismiss="modal"
-                hx-include="previous .tab-pane.active,#showUsers"
+                hx-include="previous .tab-pane.active,#search-options,#showUsers"
                 hx-get="/services/search"
                 hx-target="#services">
           Suchen
