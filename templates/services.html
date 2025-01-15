@@ -41,8 +41,8 @@
         <table class="table table-striped">
           <tbody hx-target="#service-details"
                  hx-include="#showUsers">
-            {{range .ServiceList}}
-            <tr>
+            {{range $index, $element := .ServiceList}}
+            <tr {{if eq $index 0}} class="table-active"{{end}}>
               <td hx-get="/details/{{.}}">
                 {{.}}
               </td>
