@@ -41,7 +41,9 @@
   {{else}}
   <div class="col d-flex flex-column h-100">
     <div class="row overflow-auto">
-      <table class="table table-striped">
+      <table class="table table-striped"
+             hx-on::config-request="htmx.takeClass(
+                                    event.detail.elt, 'table-active')">
         <thead class="table-primary sticky-top top-0">
           <tr>
             <th>Name</th>
@@ -50,8 +52,9 @@
           </tr>
         </thead>
         <tbody hx-target="#admins">
-          {{range .Users}}
-          <tr hx-get="/admins/{{.Owner}}">
+          {{range $index, $element := .Users}}
+          <tr {{if eq $index 0}} class="table-active"{{end}}
+              hx-get="/admins/{{.Owner}}">
             <td>{{.Name}}</td>
             <td>{{.IP}}</td>
             <td>{{.Owner}}</td>
