@@ -1,0 +1,50 @@
+<nav class="navbar bg-body-tertiary">
+  <div class="container-fluid">
+    <div class="row">
+      <ul class="nav nav-tabs col-auto bg-light px-2 h5">
+        <li class="nav-item">
+          <a class="nav-link active">
+            Dienste, Freischaltungen
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">
+            Eigene Netze
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">
+            Diff
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">
+            Berechtigungen
+          </a>
+        </li>
+      </ul>
+      <div class="input-group col mb-3">
+        <span class="input-group-text">Stand</span>
+        <input type="text" id="history" class="form-control"
+               value="Heute">
+        <button class="btn btn-outline-secondary dropdown-toggle"
+                type="button">
+        </button>
+      </div>
+      <div class="input-group col mb-3">
+        <span class="input-group-text">Verantwortungsbereich</span>
+        <input type="text" id="owner" class="form-control"
+               value="Owner1">
+        <button class="btn btn-outline-secondary dropdown-toggle"
+                type="button" data-bs-toggle="dropdown">
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Owner1</a></li>
+          <li><a class="dropdown-item" href="#">Owner2</a></li>
+          <li><a class="dropdown-item" href="#">Owner3</a></li>
+          <li><a class="dropdown-item" href="#">Owner4</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

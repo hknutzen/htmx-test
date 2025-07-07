@@ -8,13 +8,6 @@
     <script src="/htmx.min.js"></script>
     <title>HTMX Test</title>
     <style type="text/css">
-      body {
-          min-height: 100vh;
-      }
-      main {
-          height: 100vh;
-          max-height: 100vh;
-      }
       .loading-bar {
           opacity: 0;
           position: fixed;
@@ -45,11 +38,12 @@
       }
     </style>
   </head>
-  <body hx-indicator=".loading-bar">
+  <body hx-indicator=".loading-bar" class="vh-100">
     <div class="loading-bar"></div>
     {{ template "search.html" . }}
-    <div class="container-fluid bg-light">
-      <div id="services" class="row">
+    <div class="container-fluid bg-light d-flex flex-column h-100">
+      {{ template "navbar.html" . }}
+      <div class="row overflow-hidden" id="services">
         {{ template "services.html" . }}
       </div>
     </div>

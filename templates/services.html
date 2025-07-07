@@ -1,8 +1,7 @@
 <!-- rembember selected service -->
 <input type="hidden" id="service" name="service"
        value="{{.Details.Name}}" />
-<div class="col d-flex flex-column vh-100"
-     style="max-height: 100vh">
+<div class="col d-flex flex-column mh-100">
   <ul class="nav nav-tabs bg-light px-2 h5"
     hx-target="#services"
     hx-include="#showUsers">
@@ -31,8 +30,8 @@
       </a>
     </li>
   </ul>
-  <div class="row overflow-auto">
-    <div class="col d-flex flex-column h-100">
+  <div class="row flex-grow-1 overflow-auto">
+    <div class="col d-flex flex-column">
       <div class="text-end bg-body p-2">
         {{len .ServiceList}} Dienste verfügbar
       </div>
@@ -59,7 +58,6 @@
 </div>
 
 <div id="service-details"
-     class="col-8 d-flex flex-column vh-100"
-     style="max-height: 100vh">
+     class="col-8 d-flex flex-column mh-100">
   {{ template "service-details.html" .Details }}
 </div>
