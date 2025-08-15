@@ -1,0 +1,29 @@
+<button type="button"
+        class="btn btn-outline-secondary dropdown-toggle{{if .}} show{{end}}"
+        hx-include="#activeOwner"
+        {{if .}}
+        hx-get="resetOwner"
+        hx-target="#ownersCombo"
+        hx-swap="outerHTML">
+        {{else}}
+        hx-get="showOwnersMenu"
+        hx-target="#ownersCombo .dropdown"
+        hx-swap="innerHTML show:#activeItem:top">
+        {{end}}
+</button>
+<ul class="dropdown-menu dropdown-menu-end{{if .}} show{{end}}"
+    data-bs-popper="static"
+    hx-include="#activeOwner"
+    hx-target="#ownersCombo"
+    hx-swap="outerHTML">
+  {{$active := .ActiveOwner}}
+  {{range .Items}}
+  <li>
+    <a class="dropdown-item{{if eq . $active}} active" id="activeItem{{end}}"
+       href="#"
+       hx-get="setOwner/{{.}}">
+      {{.}}
+    </a>
+  </li>
+  {{end}}
+</ul>

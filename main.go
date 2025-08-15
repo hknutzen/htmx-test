@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/handlers"
 )
@@ -45,10 +46,18 @@ func main() {
 	mux.Handle("GET /details/{service}", http.HandlerFunc(updateDetails))
 	mux.Handle("GET /showUsers/{state}", http.HandlerFunc(showUsers))
 	mux.Handle("GET /admins/{owner}", http.HandlerFunc(updateAdmins))
+	mux.Handle("GET /showOwnersMenu", http.HandlerFunc(showOwnersMenu))
+	mux.Handle("GET /hideOwnersMenu", http.HandlerFunc(hideOwnersMenu))
+	mux.Handle("GET /setOwner/{owner}", http.HandlerFunc(setOwner))
+	mux.Handle("GET /resetOwner", http.HandlerFunc(resetOwner))
 	log.Fatal(http.ListenAndServe(":8080", handlers.RecoveryHandler()(mux)))
 }
 
-type templateParams struct {
+type indexParams struct {
+	serviceParams
+	ActiveOwner string
+}
+type serviceParams struct {
 	ServiceType string
 	ServiceList []string
 	Details     *serviceDetails
@@ -70,7 +79,10 @@ type user struct {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	params := getServiceListParams("user")
+	params := indexParams{
+		serviceParams: getServiceListParams("user"),
+		ActiveOwner:   "Owner-1",
+	}
 	if err := html.ExecuteTemplate(w, "index.html", params); err != nil {
 		panic(err)
 	}
@@ -115,13 +127,55 @@ func updateAdmins(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func showOwnersMenu(w http.ResponseWriter, r *http.Request) {
+	active := r.URL.Query().Get("activeOwner")
+	search := r.URL.Query().Get("searchOwner")
+	type params struct {
+		Items       []string
+		ActiveOwner string
+	}
+	p := &params{
+		Items:       getOwnerList(21, search),
+		ActiveOwner: active,
+	}
+	if err := html.ExecuteTemplate(w, "owners-menu.html", p); err != nil {
+		panic(err)
+	}
+}
+
+func hideOwnersMenu(w http.ResponseWriter, r *http.Request) {
+	if err := html.ExecuteTemplate(w, "owners-menu.html", nil); err != nil {
+		panic(err)
+	}
+}
+
+func setOwner(w http.ResponseWriter, r *http.Request) {
+	owner := r.PathValue("owner")
+	params := &indexParams{
+		ActiveOwner: owner,
+	}
+	if err := html.ExecuteTemplate(w, "owners-combo.html", params); err != nil {
+		panic(err)
+	}
+}
+
+func resetOwner(w http.ResponseWriter, r *http.Request) {
+	owner := r.URL.Query().Get("activeOwner")
+	params := &indexParams{
+		ActiveOwner: owner,
+	}
+	if err := html.ExecuteTemplate(w, "owners-combo.html", params); err != nil {
+		panic(err)
+	}
+}
+
 func setHiddenOOB(w http.ResponseWriter, name, value string) {
 	fmt.Fprintf(w,
 		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
 		name, name, value)
 }
 
-func getServiceListParams(serviceType string) templateParams {
+func getServiceListParams(serviceType string) serviceParams {
 	size := 0
 	var prefix string
 	switch serviceType {
@@ -146,7 +200,7 @@ func getServiceListParams(serviceType string) templateParams {
 		details = getDetails(table[0])
 	}
 	details.ShowUsers = "off"
-	return templateParams{
+	return serviceParams{
 		ServiceType: serviceType,
 		ServiceList: table,
 		Details:     &details,
@@ -192,4 +246,16 @@ func getAdmins(owner string) []string {
 		admins[i] = fmt.Sprintf("admin-%d@example.com", i+1)
 	}
 	return admins
+}
+
+func getOwnerList(n int, search string) []string {
+	var result []string
+	search = strings.ToLower(search)
+	for i := range n {
+		o := fmt.Sprintf("Owner-%d", i+1)
+		if strings.Contains(strings.ToLower(o), search) {
+			result = append(result, o)
+		}
+	}
+	return result
 }
