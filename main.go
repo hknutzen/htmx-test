@@ -46,16 +46,21 @@ func main() {
 	mux.Handle("GET /details/{service}", http.HandlerFunc(updateDetails))
 	mux.Handle("GET /showUsers/{state}", http.HandlerFunc(showUsers))
 	mux.Handle("GET /admins/{owner}", http.HandlerFunc(updateAdmins))
-	mux.Handle("GET /showOwnersMenu", http.HandlerFunc(showOwnersMenu))
-	mux.Handle("GET /hideOwnersMenu", http.HandlerFunc(hideOwnersMenu))
+	mux.Handle("GET /showOwnerMenu", http.HandlerFunc(showOwnerMenu))
+	mux.Handle("GET /hideOwnerMenu", http.HandlerFunc(hideOwnerMenu))
 	mux.Handle("GET /setOwner/{owner}", http.HandlerFunc(setOwner))
 	mux.Handle("GET /resetOwner", http.HandlerFunc(resetOwner))
 	log.Fatal(http.ListenAndServe(":8080", handlers.RecoveryHandler()(mux)))
 }
 
 type indexParams struct {
+	OwnerComboParams comboParams
 	serviceParams
-	ActiveOwner string
+}
+type comboParams struct {
+	Name       string
+	ActiveItem string
+	Items      []string
 }
 type serviceParams struct {
 	ServiceType string
@@ -80,8 +85,8 @@ type user struct {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	params := indexParams{
-		serviceParams: getServiceListParams("user"),
-		ActiveOwner:   "Owner-1",
+		serviceParams:    getServiceListParams("user"),
+		OwnerComboParams: comboParams{Name: "Owner", ActiveItem: "Owner-1"},
 	}
 	if err := html.ExecuteTemplate(w, "index.html", params); err != nil {
 		panic(err)
@@ -127,45 +132,43 @@ func updateAdmins(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func showOwnersMenu(w http.ResponseWriter, r *http.Request) {
-	active := r.URL.Query().Get("activeOwner")
-	search := r.URL.Query().Get("searchOwner")
-	type params struct {
-		Items       []string
-		ActiveOwner string
+func showOwnerMenu(w http.ResponseWriter, r *http.Request) {
+	p := getOwnerComboParams(r)
+	search := r.URL.Query().Get("Search")
+	if search == p.ActiveItem {
+		search = ""
 	}
-	p := &params{
-		Items:       getOwnerList(21, search),
-		ActiveOwner: active,
-	}
-	if err := html.ExecuteTemplate(w, "owners-menu.html", p); err != nil {
+	p.Items = getOwnerList(21, search)
+	if err := html.ExecuteTemplate(w, "menu.html", p); err != nil {
 		panic(err)
 	}
 }
 
-func hideOwnersMenu(w http.ResponseWriter, r *http.Request) {
-	if err := html.ExecuteTemplate(w, "owners-menu.html", nil); err != nil {
+func hideOwnerMenu(w http.ResponseWriter, r *http.Request) {
+	if err := html.ExecuteTemplate(w, "menu.html", nil); err != nil {
 		panic(err)
 	}
 }
 
 func setOwner(w http.ResponseWriter, r *http.Request) {
-	owner := r.PathValue("owner")
-	params := &indexParams{
-		ActiveOwner: owner,
-	}
-	if err := html.ExecuteTemplate(w, "owners-combo.html", params); err != nil {
+	p := getOwnerComboParams(r)
+	p.ActiveItem = r.PathValue("owner")
+	if err := html.ExecuteTemplate(w, "combo.html", p); err != nil {
 		panic(err)
 	}
 }
 
 func resetOwner(w http.ResponseWriter, r *http.Request) {
-	owner := r.URL.Query().Get("activeOwner")
-	params := &indexParams{
-		ActiveOwner: owner,
-	}
-	if err := html.ExecuteTemplate(w, "owners-combo.html", params); err != nil {
+	p := getOwnerComboParams(r)
+	if err := html.ExecuteTemplate(w, "combo.html", p); err != nil {
 		panic(err)
+	}
+}
+
+func getOwnerComboParams(r *http.Request) *comboParams {
+	return &comboParams{
+		Name:       "Owner",
+		ActiveItem: r.URL.Query().Get("ActiveItem"),
 	}
 }
 

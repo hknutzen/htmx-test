@@ -1,0 +1,15 @@
+<div class="input-group col mb-3">
+  <span class="input-group-text">{{.Name}}</span>
+  <input type="hidden" name="Name" value="{{.Name}}"/>
+  <input type="hidden" name="ActiveItem" value="{{.ActiveItem}}"/>
+  <input type="text" name="Search" class="form-control"
+         value="{{.ActiveItem}}"
+         onclick="this.select()"
+         hx-include="closest .input-group"
+         hx-get="show{{.Name}}Menu"
+         hx-trigger="input changed delay:500ms"
+         hx-target="next .dropdown"/>
+  <div class="dropdown">
+    {{ template "menu.html" . }}
+  </div>
+</div>
