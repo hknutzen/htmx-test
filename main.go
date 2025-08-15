@@ -106,7 +106,6 @@ func updateDetails(w http.ResponseWriter, r *http.Request) {
 	dt := getDetails(r.PathValue("service"))
 	dt.ShowUsers = r.URL.Query().Get("showUsers")
 	execTemplate(w, "service-details.html", dt)
-	setHiddenOOB(w, "service", dt.Name)
 }
 
 func showUsers(w http.ResponseWriter, r *http.Request) {
@@ -166,12 +165,6 @@ func execTemplate(w io.Writer, name string, data any) {
 	if err := html.ExecuteTemplate(w, name, data); err != nil {
 		panic(err)
 	}
-}
-
-func setHiddenOOB(w http.ResponseWriter, name, value string) {
-	fmt.Fprintf(w,
-		`<input type="hidden" id="%s" name="%s" hx-swap-oob="true" value="%s" />`,
-		name, name, value)
 }
 
 func getServiceListParams(serviceType string) serviceParams {
