@@ -6,10 +6,10 @@
          value="{{.ActiveItem}}"
          onclick="this.select()"
          hx-include="closest .input-group"
-         hx-get="show{{.Name}}Menu"
+         hx-get="showMenu"
          hx-trigger="input changed delay:500ms"
          hx-target="next .dropdown"/>
   <div class="dropdown">
-    {{ template "menu.html" . }}
+    {{ template "menu.html" }}
   </div>
 </div>

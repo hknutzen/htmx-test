@@ -1,28 +1,27 @@
 <button type="button"
-        class="btn btn-outline-secondary dropdown-toggle{{if .Items}} show{{end}}"
+        class="btn btn-outline-secondary dropdown-toggle{{if .}} show{{end}}"
         hx-include="closest .input-group"
-        {{if .Items}}
-        hx-get="reset{{.Name}}"
+        {{if .}}
+        hx-get="resetCombo"
         hx-target="closest .input-group"
         hx-swap="outerHTML">
         {{else}}
-        hx-get="show{{.Name}}Menu"
+        hx-get="showMenu"
         hx-target="closest .dropdown"
         hx-swap="innerHTML show:#activeItem:top">
         {{end}}
 </button>
-<ul class="dropdown-menu dropdown-menu-end{{if .Items}} show{{end}}"
+<ul class="dropdown-menu dropdown-menu-end{{if .}} show{{end}}"
     data-bs-popper="static"
     hx-include="closest .input-group"
     hx-target="closest .input-group"
     hx-swap="outerHTML">
-  {{$name := .Name}}
   {{$active := .ActiveItem}}
   {{range .Items}}
   <li>
     <a class="dropdown-item{{if eq . $active}} active" id="activeItem{{end}}"
        href="#"
-       hx-get="set{{$name}}/{{.}}">
+       hx-get="setCombo/{{.}}">
       {{.}}
     </a>
   </li>

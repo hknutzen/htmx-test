@@ -23,14 +23,7 @@
           </a>
         </li>
       </ul>
-      <div class="input-group col mb-3">
-        <span class="input-group-text">Stand</span>
-        <input type="text" id="history" class="form-control"
-               value="Heute">
-        <button class="btn btn-outline-secondary dropdown-toggle"
-                type="button">
-        </button>
-      </div>
+      {{ template "combo.html" .HistoryComboParams }}
       {{ template "combo.html" .OwnerComboParams }}
     </div>
   </div>

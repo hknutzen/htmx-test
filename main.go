@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
@@ -46,15 +47,16 @@ func main() {
 	mux.Handle("GET /details/{service}", http.HandlerFunc(updateDetails))
 	mux.Handle("GET /showUsers/{state}", http.HandlerFunc(showUsers))
 	mux.Handle("GET /admins/{owner}", http.HandlerFunc(updateAdmins))
-	mux.Handle("GET /showOwnerMenu", http.HandlerFunc(showOwnerMenu))
-	mux.Handle("GET /hideOwnerMenu", http.HandlerFunc(hideOwnerMenu))
-	mux.Handle("GET /setOwner/{owner}", http.HandlerFunc(setOwner))
-	mux.Handle("GET /resetOwner", http.HandlerFunc(resetOwner))
+	mux.Handle("GET /showMenu", http.HandlerFunc(showMenu))
+	mux.Handle("GET /hideMenu", http.HandlerFunc(hideMenu))
+	mux.Handle("GET /setCombo/{selected}", http.HandlerFunc(setCombo))
+	mux.Handle("GET /resetCombo", http.HandlerFunc(resetCombo))
 	log.Fatal(http.ListenAndServe(":8080", handlers.RecoveryHandler()(mux)))
 }
 
 type indexParams struct {
-	OwnerComboParams comboParams
+	HistoryComboParams comboParams
+	OwnerComboParams   comboParams
 	serviceParams
 }
 type comboParams struct {
@@ -85,12 +87,11 @@ type user struct {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	params := indexParams{
-		serviceParams:    getServiceListParams("user"),
-		OwnerComboParams: comboParams{Name: "Owner", ActiveItem: "Owner-1"},
+		HistoryComboParams: comboParams{Name: "Stand", ActiveItem: "heute"},
+		OwnerComboParams:   comboParams{Name: "Owner", ActiveItem: "Owner-1"},
+		serviceParams:      getServiceListParams("user"),
 	}
-	if err := html.ExecuteTemplate(w, "index.html", params); err != nil {
-		panic(err)
-	}
+	execTemplate(w, "index.html", params)
 }
 
 func updateServices(w http.ResponseWriter, r *http.Request) {
@@ -98,26 +99,20 @@ func updateServices(w http.ResponseWriter, r *http.Request) {
 	params := getServiceListParams(serviceType)
 	params.Details.ShowUsers = r.URL.Query().Get("showUsers")
 	params.Details.QueryParams, _ = url.QueryUnescape(r.URL.String())
-	if err := html.ExecuteTemplate(w, "services.html", params); err != nil {
-		panic(err)
-	}
+	execTemplate(w, "services.html", params)
 }
 
 func updateDetails(w http.ResponseWriter, r *http.Request) {
 	dt := getDetails(r.PathValue("service"))
 	dt.ShowUsers = r.URL.Query().Get("showUsers")
-	if err := html.ExecuteTemplate(w, "service-details.html", dt); err != nil {
-		panic(err)
-	}
+	execTemplate(w, "service-details.html", dt)
 	setHiddenOOB(w, "service", dt.Name)
 }
 
 func showUsers(w http.ResponseWriter, r *http.Request) {
 	dt := getDetails(r.URL.Query().Get("service"))
 	dt.ShowUsers = r.PathValue("state")
-	if err := html.ExecuteTemplate(w, "service-details.html", dt); err != nil {
-		panic(err)
-	}
+	execTemplate(w, "service-details.html", dt)
 }
 
 func updateAdmins(w http.ResponseWriter, r *http.Request) {
@@ -127,48 +122,49 @@ func updateAdmins(w http.ResponseWriter, r *http.Request) {
 		UOwner: uOwner,
 		Admins: admins,
 	}
-	if err := html.ExecuteTemplate(w, "admins.html", details); err != nil {
-		panic(err)
-	}
+	execTemplate(w, "admins.html", details)
 }
 
-func showOwnerMenu(w http.ResponseWriter, r *http.Request) {
-	p := getOwnerComboParams(r)
+func showMenu(w http.ResponseWriter, r *http.Request) {
+	p := getComboParams(r)
 	search := r.URL.Query().Get("Search")
 	if search == p.ActiveItem {
 		search = ""
 	}
-	p.Items = getOwnerList(21, search)
-	if err := html.ExecuteTemplate(w, "menu.html", p); err != nil {
-		panic(err)
+	switch p.Name {
+	case "Owner":
+		p.Items = getOwnerList(21, search)
+	case "Stand":
+		p.Items = getHistoryList(42, search)
 	}
+	execTemplate(w, "menu.html", p)
 }
 
-func hideOwnerMenu(w http.ResponseWriter, r *http.Request) {
-	if err := html.ExecuteTemplate(w, "menu.html", nil); err != nil {
-		panic(err)
-	}
+func hideMenu(w http.ResponseWriter, r *http.Request) {
+	execTemplate(w, "menu.html", nil)
 }
 
-func setOwner(w http.ResponseWriter, r *http.Request) {
-	p := getOwnerComboParams(r)
-	p.ActiveItem = r.PathValue("owner")
-	if err := html.ExecuteTemplate(w, "combo.html", p); err != nil {
-		panic(err)
-	}
+func setCombo(w http.ResponseWriter, r *http.Request) {
+	p := getComboParams(r)
+	p.ActiveItem = r.PathValue("selected")
+	execTemplate(w, "combo.html", p)
 }
 
-func resetOwner(w http.ResponseWriter, r *http.Request) {
-	p := getOwnerComboParams(r)
-	if err := html.ExecuteTemplate(w, "combo.html", p); err != nil {
-		panic(err)
-	}
+func resetCombo(w http.ResponseWriter, r *http.Request) {
+	p := getComboParams(r)
+	execTemplate(w, "combo.html", p)
 }
 
-func getOwnerComboParams(r *http.Request) *comboParams {
+func getComboParams(r *http.Request) *comboParams {
 	return &comboParams{
-		Name:       "Owner",
+		Name:       r.URL.Query().Get("Name"),
 		ActiveItem: r.URL.Query().Get("ActiveItem"),
+	}
+}
+
+func execTemplate(w io.Writer, name string, data any) {
+	if err := html.ExecuteTemplate(w, name, data); err != nil {
+		panic(err)
 	}
 }
 
@@ -256,6 +252,18 @@ func getOwnerList(n int, search string) []string {
 	search = strings.ToLower(search)
 	for i := range n {
 		o := fmt.Sprintf("Owner-%d", i+1)
+		if strings.Contains(strings.ToLower(o), search) {
+			result = append(result, o)
+		}
+	}
+	return result
+}
+
+func getHistoryList(n int, search string) []string {
+	var result []string
+	search = strings.ToLower(search)
+	for i := range n {
+		o := fmt.Sprintf("%d-%d-%d", 2025-i, (i%12)+1, (i%30)+1)
 		if strings.Contains(strings.ToLower(o), search) {
 			result = append(result, o)
 		}
