@@ -1,7 +1,7 @@
 <div class="col d-flex flex-column mh-100">
   <ul class="nav nav-tabs bg-light px-2 h5"
     hx-target="#services"
-    hx-include="#showUsers">
+    hx-include="#showUsers,#ActiveOwner,#ActiveHistory">
     <li class="nav-item">
       <a class="nav-link {{if eq "owner" .ServiceType}}active{{end}}"
          hx-get="/services/owner">

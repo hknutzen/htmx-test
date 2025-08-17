@@ -87,7 +87,7 @@ type user struct {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	params := indexParams{
-		HistoryComboParams: comboParams{Name: "Stand", ActiveItem: "heute"},
+		HistoryComboParams: comboParams{Name: "History", ActiveItem: "heute"},
 		OwnerComboParams:   comboParams{Name: "Owner", ActiveItem: "Owner-1"},
 		serviceParams:      getServiceListParams("user"),
 	}
@@ -133,14 +133,14 @@ func showMenu(w http.ResponseWriter, r *http.Request) {
 	switch p.Name {
 	case "Owner":
 		p.Items = getOwnerList(21, search)
-	case "Stand":
+	case "History":
 		p.Items = getHistoryList(42, search)
 	}
-	execTemplate(w, "menu.html", p)
+	execTemplate(w, "combo-menu.html", p)
 }
 
 func hideMenu(w http.ResponseWriter, r *http.Request) {
-	execTemplate(w, "menu.html", nil)
+	execTemplate(w, "combo-menu.html", nil)
 }
 
 func setCombo(w http.ResponseWriter, r *http.Request) {
@@ -155,10 +155,14 @@ func resetCombo(w http.ResponseWriter, r *http.Request) {
 }
 
 func getComboParams(r *http.Request) *comboParams {
-	return &comboParams{
-		Name:       r.URL.Query().Get("Name"),
-		ActiveItem: r.URL.Query().Get("ActiveItem"),
+	p := &comboParams{Name: r.URL.Query().Get("Name")}
+	switch p.Name {
+	case "Owner":
+		p.ActiveItem = r.URL.Query().Get("ActiveOwner")
+	case "History":
+		p.ActiveItem = r.URL.Query().Get("ActiveHistory")
 	}
+	return p
 }
 
 func execTemplate(w io.Writer, name string, data any) {

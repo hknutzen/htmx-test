@@ -1,7 +1,7 @@
 <div class="input-group col mb-3">
   <span class="input-group-text">{{.Name}}</span>
   <input type="hidden" name="Name" value="{{.Name}}"/>
-  <input type="hidden" name="ActiveItem" value="{{.ActiveItem}}"/>
+  <input type="hidden" id="Active{{.Name}}" name="Active{{.Name}}" value="{{.ActiveItem}}"/>
   <input type="text" name="Search" class="form-control"
          value="{{.ActiveItem}}"
          onclick="this.select()"
@@ -10,6 +10,6 @@
          hx-trigger="input changed delay:500ms"
          hx-target="next .dropdown"/>
   <div class="dropdown">
-    {{ template "menu.html" }}
+    {{ template "combo-menu.html" }}
   </div>
 </div>
