@@ -4,14 +4,16 @@
         {{if .}}
         hx-get="resetCombo"
         hx-target="closest .input-group"
-        hx-swap="outerHTML">
+        hx-swap="outerHTML"
         {{else}}
         hx-get="showMenu"
         hx-target="closest .dropdown"
-        hx-swap="innerHTML show:#activeItem:top">
+        hx-swap="innerHTML show:#activeItem:top"
         {{end}}
-</button>
-<ul class="dropdown-menu dropdown-menu-end{{if .}} show{{end}}"
+        />
+
+{{if .}}
+<ul class="dropdown-menu dropdown-menu-end show"
     data-bs-popper="static"
     hx-include="closest .input-group"
     hx-target="closest .input-group"
@@ -27,3 +29,4 @@
   </li>
   {{end}}
 </ul>
+{{end}}
