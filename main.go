@@ -24,6 +24,8 @@ var (
 	bootstrapJS embed.FS
 	//go:embed bootstrap.min.css
 	bootstrapCSS embed.FS
+	//go:embed alpine.min.js
+	alpine embed.FS
 	// Parsed templates
 	html *template.Template
 )
@@ -41,6 +43,7 @@ func main() {
 	mux.Handle("GET /bootstrap.bundle.min.js",
 		http.FileServer(http.FS(bootstrapJS)))
 	mux.Handle("GET /bootstrap.min.css", http.FileServer(http.FS(bootstrapCSS)))
+	mux.Handle("GET /alpine.min.js", http.FileServer(http.FS(alpine)))
 
 	mux.Handle("GET /", http.HandlerFunc(index))
 	mux.Handle("GET /services/{type}", http.HandlerFunc(updateServices))
