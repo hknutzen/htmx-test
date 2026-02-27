@@ -14,6 +14,8 @@
 
 {{if .}}
 <ul class="dropdown-menu dropdown-menu-end show"
+    x-data
+    x-on:click.outside="$dispatch('click')"
     data-bs-popper="static"
     hx-include="closest .input-group"
     hx-target="closest .input-group"
